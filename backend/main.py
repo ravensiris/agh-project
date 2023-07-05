@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI
+from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import (get_redoc_html, get_swagger_ui_html,
                                   get_swagger_ui_oauth2_redirect_html)
@@ -36,6 +37,18 @@ app.mount("/static", StaticFiles(directory="backend/static"), name="static")
 def create_student(customer: CustomerWrite):
     db_customer = ModelCustomer(full_name=customer.full_name)
     db.session.add(db_customer)
+    db.session.commit()
+    db.session.refresh(db_customer)
+    return db_customer
+
+
+@app.put("/customers/{id}", response_model=SchemaCustomer)
+def create_student(id: str, customer: CustomerWrite):
+    db_customer = db.session.query(ModelCustomer).filter(ModelCustomer.id == id).first()
+    if not db_customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    db_customer.full_name = customer.full_name
     db.session.commit()
     db.session.refresh(db_customer)
     return db_customer
