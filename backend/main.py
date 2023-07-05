@@ -1,25 +1,20 @@
-from typing import Union, Optional
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import (get_redoc_html, get_swagger_ui_html,
+                                  get_swagger_ui_oauth2_redirect_html)
 from fastapi.staticfiles import StaticFiles
+from fastapi_sqlalchemy import DBSessionMiddleware, db
 
-from fastapi.openapi.docs import (
-    get_redoc_html,
-    get_swagger_ui_html,
-    get_swagger_ui_oauth2_redirect_html,
-)
-
-from fastapi_sqlalchemy import DBSessionMiddleware
-from fastapi_sqlalchemy import db
-
-from .models import Student as ModelStudent
-from .schema import StudentWrite, Student as SchemaStudent
-
-import os
+from .models import Customer as ModelCustomer
+from .schema import Customer as SchemaCustomer
+from .schema import CustomerWrite
 
 postgres_socket_dir = os.path.join(os.environ["DEVENV_STATE"], "postgres")
-dev_sqlalchemy_url = f"postgresql+psycopg2://postgres:postgres@/backend?host={postgres_socket_dir}"
+dev_sqlalchemy_url = (
+    f"postgresql+psycopg2://postgres:postgres@/backend?host={postgres_socket_dir}"
+)
 
 origins = [
     "http://localhost:3000",
@@ -38,22 +33,20 @@ app.add_middleware(DBSessionMiddleware, db_url=dev_sqlalchemy_url)
 
 app.mount("/static", StaticFiles(directory="backend/static"), name="static")
 
-@app.post("/students", response_model=SchemaStudent)
-def create_student(user: StudentWrite):
-    db_student = ModelStudent(
-        name=user.name,
-        surname=user.surname,
-        age=user.age,
-        email=user.email
-    )
-    db.session.add(db_student)
-    db.session.commit()
-    db.session.refresh(db_student)
-    return db_student
 
-@app.get("/students", response_model=list[SchemaStudent])
+@app.post("/customers", response_model=SchemaCustomer)
+def create_student(customer: CustomerWrite):
+    db_customer = ModelCustomer(full_name=customer.full_name)
+    db.session.add(db_customer)
+    db.session.commit()
+    db.session.refresh(db_customer)
+    return db_customer
+
+
+@app.get("/customers", response_model=list[SchemaCustomer])
 def list_students(skip: int = 0, limit: int = 100):
-    return db.session.query(ModelStudent).offset(skip).limit(limit).all()
+    return db.session.query(ModelCustomer).offset(skip).limit(limit).all()
+
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
@@ -83,4 +76,5 @@ async def redoc_html():
 def start():
     """Launched with `poetry run start` at root level"""
     import uvicorn
+
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

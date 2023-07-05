@@ -4,10 +4,7 @@ from pydantic import BaseModel
 
 
 class CustomerBase(BaseModel):
-    name: str
-    surname: str
-    age: int
-    email: str
+    full_name: str
 
 
 class CustomerDBBase(CustomerBase):
@@ -17,5 +14,9 @@ class CustomerDBBase(CustomerBase):
         orm_mode = True
 
 
-class StudentWrite(CustomerBase):
+class CustomerWrite(CustomerBase):
+    pass
+
+
+class Customer(CustomerBase):
     pass
