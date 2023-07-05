@@ -1,14 +1,17 @@
 import { Breadcrumb, Table, Card } from 'flowbite-react'
 import { HiHome } from 'react-icons/hi'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function CustomerList() {
   const [users, setUsers] = useState([])
 
-  fetch('http://localhost:8000/customers')
-    .then(response => response.json())
-    .then(data => setUsers(data))
-    .catch(error => console.error(error))
+  useEffect(() => {
+    fetch('http://localhost:8000/customers')
+      .then(response => response.json())
+      .then(data => setUsers(data))
+      .catch(error => console.error(error))
+  }, [])
+
   return (
     <>
       <Breadcrumb
