@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Maksymilian Jodłowski <maksymilian.jodlowski@gmail.com>"]
+license = "GPLv3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+psycopg2-binary = "^2.9.6"
+fastapi-sqlalchemy = "^0.2.1"
+
+
+[tool.poetry.group.dev.dependencies]
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+alembic = "^1.10.4"
+
+[tool.poetry.scripts]
+start = "backend.main:start"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
