@@ -18,5 +18,5 @@ class CustomerWrite(CustomerBase):
     pass
 
 
-class Customer(CustomerBase):
+class Customer(CustomerDBBase):
     pass

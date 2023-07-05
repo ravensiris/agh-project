@@ -16,9 +16,7 @@ dev_sqlalchemy_url = (
     f"postgresql+psycopg2://postgres:postgres@/backend?host={postgres_socket_dir}"
 )
 
-origins = [
-    "http://localhost:3000",
-]
+origins = ["*"]
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
