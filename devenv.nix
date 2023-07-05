@@ -1,28 +1,23 @@
-{ pkgs, ... }:
+{pkgs, ...}: {
+  packages = [
+    pkgs.nodePackages_latest.pyright
+  ];
 
-{
-  # https://devenv.sh/basics/
-  env.GREET = "devenv";
+  languages.python = {
+    enable = true;
+    package = pkgs.python311Full;
+    poetry.enable = true;
+  };
 
-  # https://devenv.sh/packages/
-  packages = [ pkgs.git ];
+  languages.javascript.enable = true;
 
-  # https://devenv.sh/scripts/
-  scripts.hello.exec = "echo hello from $GREET";
-
-  enterShell = ''
-    hello
-    git --version
-  '';
-
-  # https://devenv.sh/languages/
-  # languages.nix.enable = true;
-
-  # https://devenv.sh/pre-commit-hooks/
-  # pre-commit.hooks.shellcheck.enable = true;
-
-  # https://devenv.sh/processes/
-  # processes.ping.exec = "ping example.com";
-
-  # See full reference at https://devenv.sh/reference/options/
+  services.postgres = {
+    enable = true;
+    initialScript = ''
+      CREATE ROLE postgres WITH LOGIN SUPERUSER PASSWORD 'postgres';
+    '';
+    initialDatabases = [
+      {name = "backend";}
+    ];
+  };
 }
